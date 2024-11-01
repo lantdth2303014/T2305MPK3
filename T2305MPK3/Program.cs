@@ -6,6 +6,17 @@ using T2305MPK3.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS to allow any origin
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -43,6 +54,9 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+// Enable CORS globally
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
