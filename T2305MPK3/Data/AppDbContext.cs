@@ -14,5 +14,7 @@ namespace T2305MPK3.Data
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Sizes> Sizes { get; set; }
         public DbSet<ItemVariants> ItemVariants { get; set; }
+        public DbSet<CustOrder> CustOrders { get; set; }
+        public DbSet<CustOrderDetail> CustOrderDetails { get; set; }
     }
 }
