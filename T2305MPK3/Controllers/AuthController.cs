@@ -8,6 +8,7 @@ using BCrypt.Net;
 using T2305MPK3.Data;
 using T2305MPK3.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace T2305MPK3.Controllers
 {
@@ -44,11 +45,12 @@ namespace T2305MPK3.Controllers
             _dbContext.LoginMasters.Add(newUser);
             await _dbContext.SaveChangesAsync();
 
-            // Add the user to the Customer table.
+            // Add the user to the Customer table with reference to LoginMasterId
             var newCustomer = new Customer
             {
                 Name = userRegister.Username,
-                Email = userRegister.Username
+                Email = userRegister.Username,
+                LoginMasterId = newUser.UserId  // Link to LoginMaster
             };
 
             _dbContext.Customers.Add(newCustomer);
@@ -98,7 +100,7 @@ namespace T2305MPK3.Controllers
 
             if (user is not null && BCrypt.Net.BCrypt.Verify(userLogin.Password, user.Password))
             {
-                var token = GenerateJwtToken(user.Username, user.Role);
+                var token = GenerateJwtToken(user.UserId, user.Username, user.Role); // Pass UserId here
                 return Ok(new { token });
             }
 
@@ -113,7 +115,7 @@ namespace T2305MPK3.Controllers
             return Ok("This is protected data for Caterers only.");
         }
 
-        private string GenerateJwtToken(string username, string role)
+        private string GenerateJwtToken(int userId, string username, string role)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
@@ -124,6 +126,7 @@ namespace T2305MPK3.Controllers
                 audience: jwtSettings["Audience"],
                 claims: new[]
                 {
+                    new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, userId.ToString()), // Add UserId claim
                     new System.Security.Claims.Claim("sub", username),
                     new System.Security.Claims.Claim("role", role)
                 },

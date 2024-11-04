@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace T2305MPK3.Models
 {
@@ -6,6 +7,11 @@ namespace T2305MPK3.Models
     {
         [Key]
         public int CustomerId { get; set; }
+
+        // Reference to LoginMaster table
+        public int? LoginMasterId { get; set; }
+        [ForeignKey("LoginMasterId")]
+        public LoginMaster LoginMaster { get; set; }
 
         [Required]
         [MaxLength(100)]

@@ -14,7 +14,19 @@ namespace T2305MPK3.Models
         [Required]
         public DateTime DeliveryDate { get; set; }
 
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
+
+        [MaxLength(100)]
+        public string Name { get; set; }
+
+        [MaxLength(15)]
+        public string Phone { get; set; }
+
+        [MaxLength(100)]
+        public string Email { get; set; }
+
+        public DateTime EventDate { get; set; }
+
         public long Restaurant_id { get; set; }
 
         [Required]
@@ -32,6 +44,6 @@ namespace T2305MPK3.Models
         public decimal? TotalCost { get; set; }
 
         [ForeignKey("CustomerId")]
-        public Customer Customer { get; set; }
+        public Customer? Customer { get; set; } 
     }
 }

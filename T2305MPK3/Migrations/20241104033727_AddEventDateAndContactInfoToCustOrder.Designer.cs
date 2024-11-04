@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using T2305MPK3.Data;
 
@@ -11,9 +12,11 @@ using T2305MPK3.Data;
 namespace T2305MPK3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241104033727_AddEventDateAndContactInfoToCustOrder")]
+    partial class AddEventDateAndContactInfoToCustOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,35 +302,6 @@ namespace T2305MPK3.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("MenuItems");
-                });
-
-            modelBuilder.Entity("T2305MPK3.Models.Restaurant", b =>
-                {
-                    b.Property<long>("RestaurantId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RestaurantId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("Rating")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("RestaurantName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("RestaurantId");
-
-                    b.ToTable("Restaurants");
                 });
 
             modelBuilder.Entity("T2305MPK3.Models.Sizes", b =>
