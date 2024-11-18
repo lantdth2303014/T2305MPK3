@@ -25,6 +25,17 @@ namespace T2305MPK3.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = order.OrderId }, order);
         }
 
+        // Get all CustOrders
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _dbContext.CustOrders
+                .Include(o => o.Customer) // Include customer details
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
         // Get a specific CustOrder by OrderId
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(int id)
@@ -38,6 +49,24 @@ namespace T2305MPK3.Controllers
             }
 
             return Ok(order);
+        }
+
+        // Get CustOrders by CustomerId
+        [HttpGet("by-customer/{customerId}")]
+        public async Task<IActionResult> GetCustOrdersByCustomerId(int customerId)
+        {
+            // Fetch orders for the given CustomerId
+            var custOrders = await _dbContext.CustOrders
+                .Where(o => o.CustomerId == customerId)
+                .Include(o => o.Customer) // Optionally include customer details
+                .ToListAsync();
+
+            if (!custOrders.Any())
+            {
+                return NotFound($"No orders found for CustomerId {customerId}.");
+            }
+
+            return Ok(custOrders);
         }
 
         // Update a CustOrder

@@ -98,7 +98,7 @@ namespace T2305MPK3.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("EventDate")
+                    b.Property<DateTime>("EventTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -116,7 +116,6 @@ namespace T2305MPK3.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OrderNote")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -278,7 +277,6 @@ namespace T2305MPK3.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ingredient")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemName")
@@ -301,6 +299,30 @@ namespace T2305MPK3.Migrations
                     b.ToTable("MenuItems");
                 });
 
+            modelBuilder.Entity("T2305MPK3.Models.Reservations", b =>
+                {
+                    b.Property<int>("ReservationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
+
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("ReservationTime")
+                        .HasColumnType("time");
+
+                    b.Property<long>("RestaurantId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ReservationId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("T2305MPK3.Models.Restaurant", b =>
                 {
                     b.Property<long>("RestaurantId")
@@ -314,6 +336,10 @@ namespace T2305MPK3.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -388,7 +414,7 @@ namespace T2305MPK3.Migrations
             modelBuilder.Entity("T2305MPK3.Models.ItemVariants", b =>
                 {
                     b.HasOne("T2305MPK3.Models.MenuItem", "MenuItem")
-                        .WithMany()
+                        .WithMany("ItemVariants")
                         .HasForeignKey("MenuItemNo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -413,6 +439,22 @@ namespace T2305MPK3.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("T2305MPK3.Models.Reservations", b =>
+                {
+                    b.HasOne("T2305MPK3.Models.Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("T2305MPK3.Models.MenuItem", b =>
+                {
+                    b.Navigation("ItemVariants");
                 });
 #pragma warning restore 612, 618
         }

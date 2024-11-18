@@ -82,5 +82,66 @@ namespace T2305MPK3.Controllers
 
             return NoContent();
         }
+
+        // Get restaurants available for a specific date and time
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableRestaurants(DateTime reservationDate, TimeSpan reservationTime)
+        {
+            // Fetch all restaurants
+            var allRestaurants = await _dbContext.Restaurants.ToListAsync();
+
+            // Fetch reservations that conflict with the given date and time
+            var conflictingReservations = await _dbContext.Reservations
+                .Where(r => r.ReservationDate == reservationDate && r.ReservationTime == reservationTime)
+                .Select(r => r.RestaurantId)
+                .ToListAsync();
+
+            // Filter out conflicting restaurants
+            var availableRestaurants = allRestaurants
+                .Where(r => !conflictingReservations.Contains(r.RestaurantId))
+                .ToList();
+
+            return Ok(availableRestaurants);
+        }
+
+        // Get all reservations
+        [HttpGet("reservations")]
+        public async Task<IActionResult> GetAllReservations()
+        {
+            var reservations = await _dbContext.Reservations
+                .Include(r => r.Restaurant) // Include restaurant details
+                .ToListAsync();
+
+            return Ok(reservations);
+        }
+
+        // Create a new reservation
+        [HttpPost("reserve")]
+        public async Task<IActionResult> CreateReservation([FromBody] Reservations reservation)
+        {
+            // Validate if the restaurant exists
+            var restaurantExists = await _dbContext.Restaurants.AnyAsync(r => r.RestaurantId == reservation.RestaurantId);
+            if (!restaurantExists)
+            {
+                return BadRequest($"Restaurant with ID {reservation.RestaurantId} does not exist.");
+            }
+
+            // Check for conflicts
+            var conflictExists = await _dbContext.Reservations.AnyAsync(r =>
+                r.RestaurantId == reservation.RestaurantId &&
+                r.ReservationDate == reservation.ReservationDate &&
+                r.ReservationTime == reservation.ReservationTime);
+
+            if (conflictExists)
+            {
+                return Conflict("The restaurant is already reserved for the specified date and time.");
+            }
+
+            // Add reservation
+            _dbContext.Reservations.Add(reservation);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetAllReservations), new { id = reservation.ReservationId }, reservation);
+        }
     }
 }

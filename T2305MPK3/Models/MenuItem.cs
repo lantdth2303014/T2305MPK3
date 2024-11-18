@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace T2305MPK3.Models
@@ -22,12 +23,12 @@ namespace T2305MPK3.Models
         public string Type { get; set; }
 
         public string Description { get; set; }
-
-        public string Ingredient { get; set; }
-
+        public string? Ingredient { get; set; }
         public string ImageURL { get; set; }
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+
+        public ICollection<ItemVariants> ItemVariants { get; set; }
     }
 }

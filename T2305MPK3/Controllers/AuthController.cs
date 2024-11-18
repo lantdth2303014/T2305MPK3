@@ -49,7 +49,6 @@ namespace T2305MPK3.Controllers
             var newCustomer = new Customer
             {
                 Name = userRegister.Username,
-                Email = userRegister.Username,
                 LoginMasterId = newUser.UserId  // Link to LoginMaster
             };
 
@@ -83,7 +82,6 @@ namespace T2305MPK3.Controllers
             var newCaterer = new Caterer
             {
                 Name = userRegister.Username,
-                Email = userRegister.Username
             };
 
             _dbContext.Caterers.Add(newCaterer);

@@ -25,7 +25,7 @@ namespace T2305MPK3.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
-        public DateTime EventDate { get; set; }
+        public DateTime EventTime { get; set; }
 
         public long Restaurant_id { get; set; }
 
@@ -35,7 +35,7 @@ namespace T2305MPK3.Models
         [Required]
         public int NoOfTable { get; set; }
 
-        public string OrderNote { get; set; }
+        public string? OrderNote { get; set; }
 
         [Column(TypeName = "decimal(15, 2)")]
         public decimal? DepositCost { get; set; }

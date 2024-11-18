@@ -18,6 +18,8 @@ namespace T2305MPK3.Models
 
         public string Description { get; set; }
 
+        public string ImageURL { get; set; }
+
         [Required]
         public byte Rating { get; set; }
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using T2305MPK3.Data;
+using T2305MPK3.DTOs;
 using T2305MPK3.Models;
 
 namespace T2305MPK3.Controllers
@@ -18,14 +19,30 @@ namespace T2305MPK3.Controllers
 
         // Create a new ItemVariant
         [HttpPost]
-        public async Task<IActionResult> CreateItemVariant([FromBody] ItemVariants itemVariant)
+        public async Task<IActionResult> CreateItemVariant([FromBody] ItemVariantDTO itemVariantDto)
         {
-            // Check if MenuItem and Size exist
-            if (!await _dbContext.MenuItems.AnyAsync(mi => mi.MenuItemNo == itemVariant.MenuItemNo) ||
-                !await _dbContext.Sizes.AnyAsync(s => s.SizeId == itemVariant.SizeId))
+            // Validate the foreign key relationships
+            var sizeExists = await _dbContext.Sizes.AnyAsync(s => s.SizeId == itemVariantDto.SizeId);
+            var menuItemExists = await _dbContext.MenuItems.AnyAsync(mi => mi.MenuItemNo == itemVariantDto.MenuItemNo);
+
+            if (!sizeExists)
             {
-                return BadRequest("Invalid MenuItem or Size.");
+                return BadRequest($"Size with ID {itemVariantDto.SizeId} does not exist.");
             }
+
+            if (!menuItemExists)
+            {
+                return BadRequest($"MenuItem with ID {itemVariantDto.MenuItemNo} does not exist.");
+            }
+
+            // Map DTO to entity
+            var itemVariant = new ItemVariants
+            {
+                // Do not assign VariantId
+                Price = itemVariantDto.Price,
+                SizeId = itemVariantDto.SizeId,
+                MenuItemNo = itemVariantDto.MenuItemNo
+            };
 
             _dbContext.ItemVariants.Add(itemVariant);
             await _dbContext.SaveChangesAsync();
@@ -48,6 +65,24 @@ namespace T2305MPK3.Controllers
             }
 
             return Ok(itemVariant);
+        }
+
+        // Get all ItemVariants
+        [HttpGet]
+        public async Task<IActionResult> GetAllItemVariants()
+        {
+            var itemVariants = await _dbContext.ItemVariants.ToListAsync();
+
+            // Map to DTOs
+            var itemVariantDtos = itemVariants.Select(iv => new ItemVariantDTO
+            {
+                VariantId = iv.VariantId,
+                Price = iv.Price,
+                SizeId = iv.SizeId,
+                MenuItemNo = iv.MenuItemNo
+            }).ToList();
+
+            return Ok(itemVariantDtos);
         }
 
         // Get all ItemVariants by MenuItemNo

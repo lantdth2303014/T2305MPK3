@@ -17,5 +17,6 @@ namespace T2305MPK3.Data
         public DbSet<CustOrder> CustOrders { get; set; }
         public DbSet<CustOrderDetail> CustOrderDetails { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<Reservations> Reservations { get; set; }
     }
 }

@@ -63,6 +63,36 @@ namespace T2305MPK3.Controllers
             return Ok(menuItems);
         }
 
+        // Get all MenuItems with their Variants
+        [HttpGet("with-variants")]
+        public async Task<IActionResult> GetMenuItemsWithVariants()
+        {
+            var menuItems = await _dbContext.MenuItems
+                .Include(mi => mi.ItemVariants)
+                .ToListAsync();
+
+            // Map entities to DTOs
+            var menuItemDtos = menuItems.Select(mi => new MenuItemDTO
+            {
+                MenuItemNo = mi.MenuItemNo,
+                ItemName = mi.ItemName,
+                Price = mi.Price,
+                CategoryId = mi.CategoryId,
+                Type = mi.Type,
+                Description = mi.Description,
+                Ingredient = mi.Ingredient,
+                ImageURL = mi.ImageURL,
+                ItemVariants = mi.ItemVariants.Select(iv => new ItemVariantDTO
+                {
+                    VariantId = iv.VariantId,
+                    Price = iv.Price,
+                    SizeId = iv.SizeId
+                }).ToList()
+            }).ToList();
+
+            return Ok(menuItemDtos);
+        }
+
         // Update a MenuItem
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuItem(int id, [FromBody] MenuItemDTO updatedMenuItemDto)
