@@ -12,7 +12,7 @@ using T2305MPK3.Data;
 namespace T2305MPK3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241118044356_InitialCreate")]
+    [Migration("20241118062344_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -128,6 +128,11 @@ namespace T2305MPK3.Migrations
 
                     b.Property<long>("Restaurant_id")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal?>("TotalCost")
                         .HasColumnType("decimal(15, 2)");

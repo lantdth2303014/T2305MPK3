@@ -44,6 +44,10 @@ namespace T2305MPK3.Models
         public decimal? TotalCost { get; set; }
 
         [ForeignKey("CustomerId")]
-        public Customer? Customer { get; set; } 
+        public Customer? Customer { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string Status { get; set; } = "pending";
     }
 }

@@ -126,6 +126,11 @@ namespace T2305MPK3.Migrations
                     b.Property<long>("Restaurant_id")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<decimal?>("TotalCost")
                         .HasColumnType("decimal(15, 2)");
 

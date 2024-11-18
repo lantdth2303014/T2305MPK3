@@ -201,7 +201,8 @@ namespace T2305MPK3.Migrations
                     NoOfTable = table.Column<int>(type: "int", nullable: false),
                     OrderNote = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DepositCost = table.Column<decimal>(type: "decimal(15,2)", nullable: true),
-                    TotalCost = table.Column<decimal>(type: "decimal(15,2)", nullable: true)
+                    TotalCost = table.Column<decimal>(type: "decimal(15,2)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {

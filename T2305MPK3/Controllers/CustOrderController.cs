@@ -109,5 +109,43 @@ namespace T2305MPK3.Controllers
 
             return NoContent();
         }
+
+        // Approve an order
+        [HttpPut("{orderId}/approve")]
+        public async Task<IActionResult> ApproveOrder(int orderId)
+        {
+            var order = await _dbContext.CustOrders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return NotFound($"Order with ID {orderId} not found.");
+            }
+
+            order.Status = "Approved";
+
+            _dbContext.CustOrders.Update(order);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = $"Order {orderId} approved successfully.", Status = order.Status });
+        }
+
+        // Cancel an order
+        [HttpPut("{orderId}/cancel")]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            var order = await _dbContext.CustOrders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return NotFound($"Order with ID {orderId} not found.");
+            }
+
+            order.Status = "Cancelled";
+
+            _dbContext.CustOrders.Update(order);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = $"Order {orderId} cancelled successfully.", Status = order.Status });
+        }
     }
 }
