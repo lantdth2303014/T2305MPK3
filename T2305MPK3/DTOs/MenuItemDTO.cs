@@ -17,9 +17,11 @@ namespace T2305MPK3.DTOs
 
     public class ItemVariantDTO
     {
-        public long? VariantId { get; set; }
+        public long VariantId { get; set; }
         public decimal Price { get; set; }
         public long SizeId { get; set; }
         public int MenuItemNo { get; set; }
+        public string MenuItemName { get; set; } // New field for MenuItem name
+        public string SizeNumber { get; set; }     // New field for Size name
     }
 }
