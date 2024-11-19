@@ -55,12 +55,39 @@ namespace T2305MPK3.Controllers
         [HttpGet("by-category/{categoryId}")]
         public async Task<IActionResult> GetMenuItemsByCategoryId(int categoryId)
         {
+            // Fetch MenuItems with related ItemVariants and Category
             var menuItems = await _dbContext.MenuItems
                 .Where(mi => mi.CategoryId == categoryId)
-                .Include(mi => mi.Category)
+                .Include(mi => mi.ItemVariants) // Include ItemVariants
+                .Include(mi => mi.Category)    // Include Category
                 .ToListAsync();
 
-            return Ok(menuItems);
+            // Map to DTOs to avoid circular references
+            var menuItemDtos = menuItems.Select(mi => new MenuItemDTO
+            {
+                MenuItemNo = mi.MenuItemNo,
+                ItemName = mi.ItemName,
+                Price = mi.Price,
+                CategoryId = mi.CategoryId,
+                Type = mi.Type,
+                Description = mi.Description,
+                Ingredient = mi.Ingredient,
+                ImageURL = mi.ImageURL,
+                Category = new CategoryDTO
+                {
+                    CategoryId = mi.Category?.CategoryId ?? 0,
+                    CategoryName = mi.Category?.CategoryName
+                },
+                ItemVariants = mi.ItemVariants.Select(iv => new ItemVariantDTO
+                {
+                    VariantId = iv.VariantId,
+                    Price = iv.Price,
+                    SizeId = iv.SizeId,
+                    MenuItemNo = iv.MenuItemNo
+                }).ToList()
+            }).ToList();
+
+            return Ok(menuItemDtos);
         }
 
         // Get all MenuItems with their Variants

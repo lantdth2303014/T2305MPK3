@@ -13,6 +13,7 @@ namespace T2305MPK3.DTOs
         public string? Ingredient { get; set; }
         public string ImageURL { get; set; }
         public List<ItemVariantDTO> ItemVariants { get; set; }
+        public CategoryDTO Category { get; set; }
     }
 
     public class ItemVariantDTO
@@ -21,7 +22,13 @@ namespace T2305MPK3.DTOs
         public decimal Price { get; set; }
         public long SizeId { get; set; }
         public int MenuItemNo { get; set; }
-        public string MenuItemName { get; set; } // New field for MenuItem name
-        public string SizeNumber { get; set; }     // New field for Size name
+        public string MenuItemName { get; set; }
+        public string SizeNumber { get; set; }
+    }
+
+    public class CategoryDTO
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
     }
 }

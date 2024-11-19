@@ -147,5 +147,43 @@ namespace T2305MPK3.Controllers
 
             return Ok(new { Message = $"Order {orderId} cancelled successfully.", Status = order.Status });
         }
+
+        // Preparing an order
+        [HttpPut("{orderId}/prepare")]
+        public async Task<IActionResult> PrepOrder(int orderId)
+        {
+            var order = await _dbContext.CustOrders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return NotFound($"Order with ID {orderId} not found.");
+            }
+
+            order.Status = "Preparing";
+
+            _dbContext.CustOrders.Update(order);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = $"Preparing order {orderId}.", Status = order.Status });
+        }
+
+        //  Order ready to serve
+        [HttpPut("{orderId}/ready")]
+        public async Task<IActionResult> OrderSet(int orderId)
+        {
+            var order = await _dbContext.CustOrders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return NotFound($"Order with ID {orderId} not found.");
+            }
+
+            order.Status = "Ready";
+
+            _dbContext.CustOrders.Update(order);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = $"Order {orderId} is ready to serve.", Status = order.Status });
+        }
     }
 }
