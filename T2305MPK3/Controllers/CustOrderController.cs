@@ -218,7 +218,7 @@ namespace T2305MPK3.Controllers
             email.Subject = "Your Order is Ready!";
 
             // Replace placeholders in the HTML
-            string emailBody = System.IO.File.ReadAllText(Path.Combine("Templates", "OrderReadyTemplate.html"));
+            string emailBody = System.IO.File.ReadAllText(Path.Combine("wwwroot", "Templates", "OrderReadyTemplate.html"));
             emailBody = emailBody.Replace("{{CustomerName}}", order.Name ?? "Valued Customer");
             emailBody = emailBody.Replace("{{OrderId}}", order.OrderId.ToString());
             emailBody = emailBody.Replace("{{OrderDetails}}", GenerateOrderDetailsHtml(order));

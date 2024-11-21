@@ -72,7 +72,7 @@ namespace T2305MPK3.Controllers
             email.Subject = "Your Order Invoice";
 
             // Load the HTML template and populate dynamic data
-            string emailBody = System.IO.File.ReadAllText(Path.Combine("Templates", "InvoiceTemplate.html"));
+            string emailBody = System.IO.File.ReadAllText(Path.Combine("wwwroot", "Templates", "InvoiceTemplate.html"));
             emailBody = emailBody.Replace("{{CustomerName}}", order.Name ?? "Valued Customer");
             emailBody = emailBody.Replace("{{OrderId}}", order.OrderId.ToString());
             emailBody = emailBody.Replace("{{OrderDate}}", order.OrderDate.ToString("yyyy-MM-dd"));
