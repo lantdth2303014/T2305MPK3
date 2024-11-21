@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MimeKit.Text;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System.Text;
 using T2305MPK3.Data;
 using T2305MPK3.Models;
 
@@ -167,11 +171,13 @@ namespace T2305MPK3.Controllers
             return Ok(new { Message = $"Preparing order {orderId}.", Status = order.Status });
         }
 
-        //  Order ready to serve
+        // Order ready to serve
         [HttpPut("{orderId}/ready")]
         public async Task<IActionResult> OrderSet(int orderId)
         {
-            var order = await _dbContext.CustOrders.FindAsync(orderId);
+            var order = await _dbContext.CustOrders
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
             {
@@ -183,7 +189,69 @@ namespace T2305MPK3.Controllers
             _dbContext.CustOrders.Update(order);
             await _dbContext.SaveChangesAsync();
 
+            // Send email to customer
+            if (!string.IsNullOrEmpty(order.Email))
+            {
+                try
+                {
+                    await SendOrderReadyEmail(order);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new
+                    {
+                        Message = $"Order {orderId} is ready to serve, but email could not be sent.",
+                        Status = order.Status,
+                        Error = ex.Message
+                    });
+                }
+            }
+
             return Ok(new { Message = $"Order {orderId} is ready to serve.", Status = order.Status });
+        }
+
+        private async Task SendOrderReadyEmail(CustOrder order)
+        {
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress("Online Caterer", "your_email@example.com"));
+            email.To.Add(new MailboxAddress(order.Name, order.Email));
+            email.Subject = "Your Order is Ready!";
+
+            // Replace placeholders in the HTML
+            string emailBody = System.IO.File.ReadAllText(Path.Combine("Templates", "OrderReadyTemplate.html"));
+            emailBody = emailBody.Replace("{{CustomerName}}", order.Name ?? "Valued Customer");
+            emailBody = emailBody.Replace("{{OrderId}}", order.OrderId.ToString());
+            emailBody = emailBody.Replace("{{OrderDetails}}", GenerateOrderDetailsHtml(order));
+
+            email.Body = new TextPart(TextFormat.Html) { Text = emailBody };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync("lantdth2303014@fpt.edu.vn", "agiiigqrzafxnbay");
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+
+        private string GenerateOrderDetailsHtml(CustOrder order)
+        {
+            // Generate a table of order details dynamically
+            var orderDetails = _dbContext.CustOrderDetails
+                .Where(d => d.OrderId == order.OrderId)
+                .Include(d => d.Category)
+                .ToList();
+
+            var sb = new StringBuilder();
+            foreach (var detail in orderDetails)
+            {
+                sb.Append($@"
+                    <tr>
+                        <td>{detail.Category?.CategoryName ?? "Unknown"}</td>
+                        <td>{detail.VariantId}</td>
+                        <td align='right'>${detail.Price:F2}</td>
+                    </tr>");
+            }
+
+            return sb.ToString();
         }
     }
 }
