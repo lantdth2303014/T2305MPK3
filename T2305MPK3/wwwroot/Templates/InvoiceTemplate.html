@@ -44,11 +44,23 @@
         }
 
         .button {
+            display: inline-block;
             background-color: #2F67F6;
             color: white;
-            padding: 10px 20px;
+            padding: 9px 30px;
             text-decoration: none;
+            font-size: 16px;
             border-radius: 5px;
+            text-align: center;
+        }
+
+            .button p {
+                color: white;
+            }
+
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
         }
 
         .order-summary th,
@@ -82,30 +94,18 @@
         </div>
         <div class="content">
             <p>Hello, {{CustomerName}}!</p>
-            <p>Thank you for your order. Below are the details:</p>
-            <table class="order-summary">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>No.Table</th>
-                        <th align="right">Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{OrderDetails}}
-                </tbody>
-                <tfoot>
-                    <tr class="total-row">
-                        <td colspan="2" align="right">Total:</td>
-                        <td align="right">{{TotalCost}}</td>
-                    </tr>
-                </tfoot>
-            </table>
-            <p>Your order will be delivered on <strong>{{DeliveryDate}}</strong>.</p>
-            <p>For any inquiries, please contact us at <a href="mailto:your_email@example.com">onlinecaterer@gmail.com</a>.</p>
+            <p>Thank you for using our services! Your order will be ready on <strong>{{DeliveryDate}}</strong>.</p>
+            <p>Click the button below to view your order:</p>
+            <br />
+            <div class="button-container">
+                <a href="http://localhost:3000/orderDetail/{{OrderId}}" class="button"><p>View Order Details</p></a>
+            </div>
+            <br />
+
+            <p>For any inquiries, please contact us at <a href="mailto:onlinecaterer@gmail.com">onlinecaterer@gmail.com</a>.</p>
         </div>
         <div class="footer">
-            <p>Online Caterer Ltd, 35 Avenue. City 10115, USA</p>
+            <p>Online Caterer Ltd, 35 Avenue, City 10115, USA</p>
             <p>
                 <a href="#">Unsubscribe</a> from our emails
             </p>
